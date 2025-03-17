@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.function.Consumer;
 
 /** 
  * MIT License
@@ -117,27 +118,34 @@ public class App {
         
     }
     
-    public static void marcarTempo(int[] vetor){
+    public static void marcarTempo(int[] vetor, Consumer funcao){
         long inicio = System.nanoTime();
-            codigo3(vetor);
+            funcao.accept(vetor);
         duracao = (System.nanoTime()-inicio) * nanoToMilli;
     }
 
-    public static String executarTeste(int[] vetor){
-        marcarTempo(vetor);
+    public static String executarTeste(int[] vetor, Consumer funcao){
+        marcarTempo(vetor, funcao);
         return String.format("Tamanho: %,2d | Operações: %,2d | Tempo: %,2f ms",
                     vetor.length, operacoes, duracao);
     }
     public static void main(String[] args) {
         int[] tamanhosTeste = tamanhosTestePequeno;
+        Consumer<int[]> funcao = App::codigo1;
         for (int i = 0; i < tamanhosTeste.length; i++) {
-            operacoes = 0;
+            int[] vetor = gerarVetor(tamanhosTeste[i]);
+            executarTeste(vetor, funcao);
+            funcao = App::codigo2;
+            executarTeste(vetor, funcao);
+        }
+    }
+    /*
+     * operacoes = 0;
             long inicio = System.nanoTime();
                 codigo4(tamanhosTeste[i]);
             duracao = (System.nanoTime()-inicio) * nanoToMilli;
             System.out.printf(
             "Tamanho: %,2d \t| Operações: %,2d \t| Tempo: %,.5f ms\n",
                     tamanhosTeste[i], operacoes, duracao);
-        }
-    }
+     */
 }
